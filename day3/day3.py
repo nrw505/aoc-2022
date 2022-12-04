@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import itertools
-
 lines = open("input.txt", "r").readlines()
 
 def priority(item):
@@ -9,10 +7,6 @@ def priority(item):
         return prio + 26
     prio = ord(item) - ord('a') + 1
     return prio
-
-def chunk(source, chunk_size):
-    while chunk := list(itertools.islice(source, chunk_size)):
-        yield chunk
 
 def part1(lines):
     total = 0
