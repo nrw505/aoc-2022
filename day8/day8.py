@@ -25,64 +25,34 @@ def is_visible(trees, position):
         return True
     return False
 
-def visibility_score(trees, position):
-    (my_x, my_y) = position
-    my_height = int(trees[position])
+def trees_visible(trees, position, direction):
     max_x = trees.max_x()
     max_y = trees.max_y()
-    v_west = 0
-    v_east = 0
-    v_north = 0
-    v_south = 0
+    min_x = trees.min_x()
+    min_y = trees.min_y()
+    my_height = int(trees[position])
 
-    # look west
-    x = my_x - 1
-    y = my_y 
-    while x >= 0:
-        
-        v_west += 1
+    x = position[0] + direction[0]
+    y = position[1] + direction[1]
+    visible = 0
+    while x >= min_x and x <= max_x and y >= min_y and y <= max_y:
+        visible += 1
         if int(trees[(x, y)]) < my_height:
-            # look one further west
-            x -= 1
+            x += direction[0]
+            y += direction[1]
         else:
-            # skip to the end
-            x = -1
+            # stop looking, we can't look any further
+            x = min_x - 1
+            y = min_y - 1
+    return visible
 
-    # look east
-    x = my_x + 1
-    y = my_y 
-    while x <= max_x:
-        v_east += 1
-        if int(trees[(x, y)]) < my_height:
-            # look one further east
-            x += 1
-        else:
-            # skip to the end
-            x = max_x + 1
+def visibility_score(trees, position):
+    (my_x, my_y) = position
 
-    # look north
-    x = my_x
-    y = my_y - 1
-    while y >= 0:
-        v_north += 1
-        if int(trees[(x, y)]) < my_height:
-            # look one further west
-            y -= 1
-        else:
-            # skip to the end
-            y = -1
-
-    # look south
-    x = my_x
-    y = my_y + 1 
-    while y <= max_y:
-        v_south += 1
-        if int(trees[(x, y)]) < my_height:
-            # look one further east
-            y += 1
-        else:
-            # skip to the end
-            y = max_y + 1
+    v_west = trees_visible(trees, position, (-1, 0))
+    v_east = trees_visible(trees, position, (1, 0))
+    v_north = trees_visible(trees, position, (0, -1))
+    v_south = trees_visible(trees, position, (0, 1))
 
     return v_west * v_east * v_north * v_south
 
